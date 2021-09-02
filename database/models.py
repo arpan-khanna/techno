@@ -1,11 +1,50 @@
 from django.db import models
 
-# Create your models here.
+from django.db import models
+
+class IntegerListField(models.CharField):
+    description = 'list of integers'
+    def from_db_value(self, value, expression, connection):
+        if value is None:
+            return None
+        return list(map(int, value.split(',')))
+
+    def to_python(self, value):
+        if isinstance(value, list):
+            return value
+        if value is None:
+            return None
+        return list(map(int, value.split(',')))
+
+    def get_prep_value(self, value):
+        if value is None:
+            return None
+        return ','.join(map(str, value))
+
+class CharListField(models.TextField):
+    def from_db_value(self, value, expression, connection):
+        if value is None:
+            return None
+        return list(value.split(','))
+
+    def to_python(self, value):
+        if isinstance(value, list):
+            return value
+        if value is None:
+            return None
+        return list(value.split(','))
+
+    def get_prep_value(self, value):
+        if value is None:
+            return None
+        return ', '.join(map(str, value))
+
+NUM_OF_LEVELS = 3
+
 class Score(models.Model):
     team = models.CharField(max_length=200)
-    blocks1 = models.IntegerField()
-    code1 = models.TextField()
-    blocks2 = models.IntegerField()
-    code2 = models.TextField()
-    blocks3 = models.IntegerField()
-    code3 = models.TextField()
+    blocks = IntegerListField(max_length=200, default=[-1]*(NUM_OF_LEVELS+1))
+    codes = CharListField(default=['']*(NUM_OF_LEVELS+1))
+
+    def __str__(self):
+        return self.team + ': [' + ', '.join(map(str, self.blocks[1:])) + ']'
