@@ -1,5 +1,5 @@
 from django.db import models
-
+from datetime import datetime
 from django.db import models
 
 class IntegerListField(models.CharField):
@@ -45,6 +45,8 @@ class Score(models.Model):
     team = models.CharField(max_length=200)
     blocks = IntegerListField(max_length=200, default=[-1]*(NUM_OF_LEVELS+1))
     codes = CharListField(default=['']*(NUM_OF_LEVELS+1))
+    score = models.DecimalField(default=0, decimal_places=3, max_digits=10)
+    time = models.DateTimeField(default=datetime.now)
 
     def __str__(self):
         return self.team + ': [' + ', '.join(map(str, self.blocks[1:])) + ']'
