@@ -39,7 +39,7 @@ class CharListField(models.TextField):
             return None
         return ', '.join(map(str, value))
 
-NUM_OF_LEVELS = 3
+NUM_OF_LEVELS = 7
 
 class Score(models.Model):
     team = models.CharField(max_length=200)
